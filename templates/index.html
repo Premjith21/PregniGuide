@@ -9,10 +9,7 @@
             background: linear-gradient(to bottom right, #FFDDE1, #EE9CA7);
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            min-height: 100vh; /* allow scroll when content exceeds */
         }
         .container {
             background: #fff;
@@ -21,6 +18,7 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
             width: 100%;
             max-width: 600px;
+            margin: 50px auto; /* allows vertical spacing and scroll */
             text-align: center;
         }
         h1 {
@@ -34,6 +32,9 @@
             border-radius: 10px;
             border: 1px solid #ddd;
             font-size: 16px;
+        }
+        textarea {
+            height: 120px; /* better height for input */
         }
         button {
             background-color: #FF5A5F;
@@ -51,6 +52,7 @@
             background-color: #FFEFF0;
             border-radius: 10px;
             text-align: left;
+            white-space: pre-wrap; /* preserve line breaks */
         }
     </style>
 </head>

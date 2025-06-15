@@ -7,13 +7,24 @@ import os
 import logging
 import pickle
 
-# ✅ Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logging.getLogger("faiss").setLevel(logging.ERROR)
 
-# ✅ Load environment variables
 load_dotenv()
+
+def get_stage_from_filename(file):
+    file_lower = file.lower()
+    if "postnatal" in file_lower or "postpartum" in file_lower:
+        return "postnatal"
+    elif "early" in file_lower:
+        return "early"
+    elif "mid" in file_lower:
+        return "mid"
+    elif "late" in file_lower:
+        return "late"
+    else:
+        return "general"
 
 def load_documents():
     docs = []
@@ -34,7 +45,6 @@ def load_documents():
                 continue
 
             raw_docs = loader.load()
-
             splitter = RecursiveCharacterTextSplitter(
                 chunk_size=1000,
                 chunk_overlap=150,
@@ -44,16 +54,17 @@ def load_documents():
             )
 
             chunks = splitter.split_documents(raw_docs)
+            stage = get_stage_from_filename(file)
 
             for doc in chunks:
                 doc.metadata.update({
                     "source": file,
-                    "file_type": os.path.splitext(file)[1],
+                    "stage": stage,
                     "chunk_length": len(doc.page_content.split())
                 })
 
             docs.extend(chunks)
-            logger.info(f"✅ Loaded {file} with {len(chunks)} chunks")
+            logger.info(f"✅ Loaded {file} with {len(chunks)} chunks, stage: {stage}")
 
         except Exception as e:
             logger.error(f"❌ Failed to process {file}: {str(e)}")
@@ -66,20 +77,15 @@ def load_documents():
 
 def create_vectorstore():
     logger.info("🔄 Creating vectorstore...")
-
     docs = load_documents()
-
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
         model_kwargs={'device': 'cpu'},
         encode_kwargs={'normalize_embeddings': True, 'batch_size': 32}
     )
-
     db = FAISS.from_documents(docs, embeddings)
     save_path = "vectorstore"
     db.save_local(save_path)
-
-    # ✅ Save the docstore.pkl explicitly (to match your app.py needs)
     with open(os.path.join(save_path, "docstore.pkl"), "wb") as f:
         pickle.dump(docs, f)
 
