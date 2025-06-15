@@ -3,5 +3,6 @@ python-dotenv
 langchain
 langchain-huggingface
 langchain-community
+sentence-transformers
 gunicorn
 groq
