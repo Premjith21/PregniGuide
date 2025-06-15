@@ -2,5 +2,6 @@ Flask
 python-dotenv
 langchain
 langchain-huggingface
+langchain-community
 gunicorn
 groq
