@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🤰 PregniGuide - AI Pregnancy Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom right, #FFDDE1, #EE9CA7);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #FF5A5F;
+            margin-bottom: 30px;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        button {
+            background-color: #FF5A5F;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #E04850;
+        }
+        .answer-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #FFEFF0;
+            border-radius: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤰 PregniGuide</h1>
+        <form id="askForm">
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            <input type="number" id="pregnancy_week" name="pregnancy_week" placeholder="Pregnancy week (1-40)" required min="1" max="40">
+            <textarea id="question" name="question" placeholder="Ask your question..." required></textarea>
+            <button type="submit">Ask</button>
+        </form>
+        <div class="answer-box" id="answerBox" style="display:none;"></div>
+    </div>
+
+    <script>
+        document.getElementById("askForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const pregnancy_week = document.getElementById("pregnancy_week").value;
+            const question = document.getElementById("question").value;
+
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({ name, pregnancy_week, question })
+            });
+
+            const data = await response.json();
+
+            document.getElementById("answerBox").style.display = "block";
+            document.getElementById("answerBox").innerText = data.answer || data.error || "An error occurred.";
+        });
+    </script>
+</body>
+</html>

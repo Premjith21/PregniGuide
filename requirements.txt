@@ -1,0 +1,9 @@
+Flask
+langchain
+sentence-transformers
+pypdf
+python-dotenv
+groq
+langchain-community
+langchain-huggingface
+langchain-text-splitters
